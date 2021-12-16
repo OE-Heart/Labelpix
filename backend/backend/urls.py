@@ -21,6 +21,6 @@ from django.urls import include, path
 # Additionally, we include login URLs for the browsable API.
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include('api.urls')),
-    path('user/', include('user.urls')),
+    # path('api/', include('api.urls')),
+    path('', include('user.urls')),
 ]
