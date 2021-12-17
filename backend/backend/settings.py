@@ -43,9 +43,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    # 'webpack_loader',
-    # 'api',
     'user',
+    'picture',
     'corsheaders',
 ]
 
@@ -153,9 +152,5 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 10
 }
 
-WEBPACK_LOADER = {
-    'DEFAULT': {
-        'BUNDLE_DIR_NAME': 'bundles/',
-        'STATS_FILE': os.path.join(BASE_DIR, 'api/webpack/webpack-stats.dev.json'),
-    }
-}
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media').replace('\\', '/')     #设置静态文件路径为主目录下的media文件夹
+MEDIA_URL = '/media/'                                                 #url映射

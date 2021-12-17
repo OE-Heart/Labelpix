@@ -2,7 +2,6 @@ from rest_framework.viewsets import ModelViewSet
 from .serializers import UserSerializer, User
 from rest_framework.decorators import action
 from django.contrib.auth import login, authenticate
-from django.contrib.auth.hashers import make_password
 from rest_framework.response import Response
 
 
@@ -29,7 +28,7 @@ class UserViewset(ModelViewSet):
             'data': {}
         }
         if not all([username, pwd]):
-            res['msg'] = '参数异常。'
+            res['msg'] = '参数异常'
             return Response(res)
         print(request.data)
         user = authenticate(username=username, password=pwd)
@@ -38,10 +37,10 @@ class UserViewset(ModelViewSet):
         print(user)
 
         if user == None:
-            res['msg'] = '用户名或者密码错误，请重新登陆。'
+            res['msg'] = '用户名或者密码错误，请重新登陆'
             return Response(res)
         if user.is_active != 1:
-            res['msg'] = '用户不可用，请重新登陆。'
+            res['msg'] = '用户不可用，请重新登陆'
             return Response(res)
 
         login(request, user)
@@ -70,20 +69,20 @@ class UserViewset(ModelViewSet):
         }
 
         if not all([email, password, username]):
-            res['msg'] = '参数异常。'
+            res['msg'] = '参数异常'
             return Response(res)
 
         print([email, password, username])
         if User.objects.filter(username=username):
-            res['msg'] = '用户名已存在。'
+            res['msg'] = '用户名已存在'
             return Response(res)
 
         if User.objects.filter(email=email):
-            res['msg'] = '邮箱已存在。'
+            res['msg'] = '邮箱已存在'
             return Response(res)
 
         User.objects.create_user(password=password, is_superuser=0, username=username, email=email)
-        res['msg'] = '注册成功。'
+        res['msg'] = '注册成功'
         res['code'] = 1
         res['data'] = [email, password, username]
         return Response(res)

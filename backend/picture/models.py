@@ -4,8 +4,8 @@ from django.contrib.auth.models import User
 # Create your models here.
 
 class Picture(models.Model):
+    pic = models.ImageField(upload_to='pic')
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
-    URI = models.CharField()
 
 class VOCPicture(models.Model):
     pic = models.OneToOneField(Picture, on_delete=models.CASCADE)
