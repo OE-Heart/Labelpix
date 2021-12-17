@@ -12,7 +12,8 @@ import Register from './components/Register/Register';
 
 class App extends React.Component {
   state = {
-    isLoggedIn: false,
+    // isLoggedIn: false,
+    isLoggedIn: true,
   }
 
   LoggedIn = () => {

@@ -1,4 +1,5 @@
 import React from 'react';
+import './Menu.css';
 
 import { Layout, Menu, Breadcrumb } from 'antd';
 import {
@@ -35,38 +36,33 @@ class SiderMenu extends React.Component {
         <Sider collapsible collapsed={collapsed} onCollapse={this.onCollapse}>
           <div className="logo" />
           <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline">
-            <Menu.Item key="1" icon={<PieChartOutlined />}>
-              Option 1
-            </Menu.Item>
-            <Menu.Item key="2" icon={<DesktopOutlined />}>
-              Option 2
-            </Menu.Item>
-            <SubMenu key="sub1" icon={<UserOutlined />} title="User">
-              <Menu.Item key="3">Tom</Menu.Item>
-              <Menu.Item key="4">Bill</Menu.Item>
-              <Menu.Item key="5">Alex</Menu.Item>
+            <SubMenu key="sub1" icon={<UserOutlined />} title="任务管理">
+              <Menu.Item key="1">创建任务</Menu.Item>
+              <Menu.Item key="2">领取任务</Menu.Item>
+              <Menu.Item key="3">提交任务</Menu.Item>
             </SubMenu>
-            <SubMenu key="sub2" icon={<TeamOutlined />} title="Team">
-              <Menu.Item key="6">Team 1</Menu.Item>
-              <Menu.Item key="8">Team 2</Menu.Item>
+            <SubMenu key="sub2" icon={<UserOutlined />} title="图像管理">
+                <Menu.Item key="4">图像列表</Menu.Item>
+                <Menu.Item key="5">图像上传</Menu.Item>
             </SubMenu>
-            <Menu.Item key="9" icon={<FileOutlined />}>
-              Files
+            <SubMenu key="sub3" icon={<UserOutlined />} title="数据集管理">
+              <Menu.Item key="6">数据集列表</Menu.Item>
+            </SubMenu>
+            <Menu.Item key="7" icon={<PieChartOutlined />}>
+              数据标注
             </Menu.Item>
           </Menu>
         </Sider>
         <Layout className="site-layout">
-          <Header className="site-layout-background" style={{ padding: 0 }} />
-          <Content style={{ margin: '0 16px' }}>
-            <Breadcrumb style={{ margin: '16px 0' }}>
-              <Breadcrumb.Item>User</Breadcrumb.Item>
-              {/* <Breadcrumb.Item>Bill</Breadcrumb.Item> */}
-            </Breadcrumb>
-            <div className="site-layout-background" style={{ padding: 24, minHeight: 360 }}>
-              Bill is a cat.
+          <Header className="site-layout-background" style={{ padding: 0 }}>
+            <div className="title">
+              Labelpix
             </div>
+          </Header>
+          <Content style={{ margin: '0 16px' }}>
+            
           </Content>
-          {/* <Footer style={{ textAlign: 'center' }}>Labelpix ©2021 Created by OE.Heart</Footer> */}
+          <Footer style={{ textAlign: 'center' }}>Labelpix ©2021 Created by OE.Heart</Footer>
         </Layout>
       </Layout>
       :
