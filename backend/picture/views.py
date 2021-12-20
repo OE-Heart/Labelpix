@@ -6,6 +6,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.contrib.auth.models import User
 from .serializers import PictureSerializer
+from rest_framework.parsers import JSONParser, FormParser, MultiPartParser
 
 # Create your views here.
 
@@ -13,6 +14,7 @@ class PictureViewset(ModelViewSet):
     '''
     图像类
     '''
+    parser_classes = [JSONParser, FormParser, MultiPartParser, ]
     serializer_class = PictureSerializer
     queryset = Picture.objects.all()
 
@@ -23,8 +25,13 @@ class PictureViewset(ModelViewSet):
         :param request: 用于传参数，必要参数 pic: 图像 owner: 拥有者
         :return:
         '''
+
+        print(req.data)
+        print(req.FILES)
+
         pic = req.FILES.get('pic')
-        owner = User.objects.get(id=req.POST['owner'])
+        filename = pic.name
+        owner = User.objects.get(id=req.data.get('owner'))
 
         res = {
             'code': 0,
@@ -32,12 +39,13 @@ class PictureViewset(ModelViewSet):
             'data': {}
         }
 
-        if not all([pic, owner]):
+        if not all([pic, filename, owner]):
             res['msg'] = '参数异常'
             return Response(res)
         
         new_pic = Picture(
             pic = pic,
+            filename = filename,
             owner = owner
         )
         new_pic.save()
@@ -50,7 +58,7 @@ class PictureViewset(ModelViewSet):
     @action(methods=['POST'], url_path='list', detail=False)
     def picture_list_of_owner(self, req):
 
-        owner = User.objects.get(id=req.POST['owner'])
+        owner = User.objects.get(id=req.data.get('owner'))
 
         res = {
             'code': 0,

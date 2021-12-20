@@ -49,7 +49,7 @@ class UserViewset(ModelViewSet):
         request.session.set_expiry(0)
         res['msg'] = '登陆成功'
         res['code'] = 1
-        res['data'] = {'username': username}
+        res['data'] = {'id': user.id}
         return Response(res)
 
     @action(methods=['POST'], url_path='register', detail=False)
