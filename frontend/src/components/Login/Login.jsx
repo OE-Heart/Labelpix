@@ -18,8 +18,9 @@ class Login extends React.Component {
     axios.post(url, values, {headers: {'Content-Type': 'application/json'}}).then(res => {
       alert (res.data.msg)
       if (res.status === 200 && res.data.code === 1) {
-        console.log('登陆成功')
-        this.props.LoggedIn()
+        // console.log(res)
+        console.log(res.data.data.id)
+        this.props.LoggedIn(res.data.data.id)
       }
       else {
         console.log(res)

@@ -12,30 +12,33 @@ import Register from './components/Register/Register';
 
 class App extends React.Component {
   state = {
-    // isLoggedIn: false,
-    isLoggedIn: true,
+    isLoggedIn: false,
+    User_ID: '',
+    // isLoggedIn: true,
   }
 
-  LoggedIn = () => {
+  LoggedIn = (id) => {
     this.setState({isLoggedIn: true});
+    this.setState({User_ID: id});
   }
 
   LoggedOut = () => {
     this.setState({isLoggedIn: false});
+    this.setState({User_ID: ''});
   }
 
   render() {
     return (
-      <Router>
+      <Router basename='/'>
         <Routes>
-          <Route path='/login' element={
+          <Route path='login' element={
             <Login 
               isLoggedIn={this.state.isLoggedIn}
               LoggedIn={this.LoggedIn}
             />}
           />
-          <Route path='/register' element={<Register/>}/>
-          <Route path='/' element={<SiderMenu isLoggedIn={this.state.isLoggedIn}/>}/>
+          <Route path='register' element={<Register/>}/>
+          <Route path='' element={<SiderMenu isLoggedIn={this.state.isLoggedIn} User_ID={this.state.User_ID}/>}/>
         </Routes>
       </Router>
     )

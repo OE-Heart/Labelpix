@@ -18,7 +18,7 @@ class Register extends React.Component {
       return
     }
 
-    var reg =/^\w+@[a-z0-9]\.[a-z]+$/i
+    var reg = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
     if (!reg.test(values.email)) {
       alert('邮箱格式错误')
       return

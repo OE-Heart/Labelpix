@@ -10,7 +10,9 @@ import {
   UserOutlined,
 } from '@ant-design/icons';
 
-import { Navigate } from "react-router-dom";
+import { Navigate, NavLink, Route, Routes } from "react-router-dom";
+import PicUpload from '../Picture/PicUpload/PicUpload';
+import withRouter from './withRouter';
 
 const { Header, Content, Footer, Sider } = Layout;
 const { SubMenu } = Menu;
@@ -38,12 +40,15 @@ class SiderMenu extends React.Component {
           <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline">
             <SubMenu key="sub1" icon={<UserOutlined />} title="任务管理">
               <Menu.Item key="1">创建任务</Menu.Item>
-              <Menu.Item key="2">领取任务</Menu.Item>
-              <Menu.Item key="3">提交任务</Menu.Item>
+              <Menu.Item key="2">任务列表</Menu.Item>
             </SubMenu>
             <SubMenu key="sub2" icon={<UserOutlined />} title="图像管理">
                 <Menu.Item key="4">图像列表</Menu.Item>
-                <Menu.Item key="5">图像上传</Menu.Item>
+                <Menu.Item key="/picture/upload">
+                  <NavLink exact to='/picture/upload'>
+                    <span>图像上传</span>
+                  </NavLink>
+                </Menu.Item>
             </SubMenu>
             <SubMenu key="sub3" icon={<UserOutlined />} title="数据集管理">
               <Menu.Item key="6">数据集列表</Menu.Item>
@@ -60,7 +65,7 @@ class SiderMenu extends React.Component {
             </div>
           </Header>
           <Content style={{ margin: '0 16px' }}>
-            
+            <PicUpload User_ID={this.props.User_ID}/>
           </Content>
           <Footer style={{ textAlign: 'center' }}>Labelpix ©2021 Created by OE.Heart</Footer>
         </Layout>
@@ -71,4 +76,4 @@ class SiderMenu extends React.Component {
   }
 }
 
-export default SiderMenu;
+export default withRouter(SiderMenu);
