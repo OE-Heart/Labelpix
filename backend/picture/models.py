@@ -12,8 +12,29 @@ class VOCPicture(models.Model):
     pic = models.OneToOneField(Picture, on_delete=models.CASCADE)
     folder = models.CharField(max_length=20)
     filename = models.CharField(max_length=60)
-    source_database = models.CharField(max_length=20)
-    source_annotation = models
+    width = models.IntegerField()
+    height = models.IntegerField()
+    depth = models.IntegerField()
+    SEGMENTED_CHOICE = [
+        (1, 'Image Segmentation'),
+        (0, 'Target Recognition')
+    ]
+    segmented = models.IntegerField(choices=SEGMENTED_CHOICE, default=0)
+    name = models.CharField(max_length=20)
+    xmin = models.IntegerField()
+    xmax = models.IntegerField()
+    ymin = models.IntegerField()
+    ymax = models.IntegerField()
+    TRUNCATED_CHOICE = [
+        (1, 'Is Truncated'),
+        (0, 'Is Not Truncated')
+    ]
+    truncated = models.IntegerField(max_length=1, choices=TRUNCATED_CHOICE, default=0)
+    DIFFICULT_CHOICE = [
+        (1, 'Is DIfficult'),
+        (0, 'Is Not Difficult')
+    ]
+    difficult = models.IntegerField(max_length=1, choices=DIFFICULT_CHOICE, default=0)
 
 class  COCOPicture(models.Model):
     pic = models.OneToOneField(Picture, on_delete=models.CASCADE)

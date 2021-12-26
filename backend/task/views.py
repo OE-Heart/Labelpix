@@ -58,7 +58,7 @@ class TaskViewset(ModelViewSet):
 
         print(request.data)
 
-        task = Task.objects.get(name=request.data.get('name'))
+        task = Task.objects.get(id=request.data.get('id'))
         take_user = User.objects.get(id=request.data.get('take_user'))
 
         res = {
@@ -74,7 +74,7 @@ class TaskViewset(ModelViewSet):
         task.state = 'P'
         task.save()
 
-        res['msg'] = '修改成功'
+        res['msg'] = '领取成功'
         res['code'] = 1
         res['data'] = {}
         return Response(res)
@@ -84,7 +84,7 @@ class TaskViewset(ModelViewSet):
 
         print(request.data)
 
-        task = Task.objects.get(name=request.data.get('name'))
+        task = Task.objects.get(id=request.data.get('id'))
 
         res = {
             'code': 0,

@@ -20,14 +20,15 @@ class DatasetViewset(ModelViewSet):
 
         name = request.data.get('name')
         description = request.data.get('description')
-        pics = Picture.objects.filter(id=request.data.get('pics'))
+        picList = request.data.get('pics')
+        print(picList)
 
         res = {
             'code': 0,
             'msg': '',
             'data': {}
         }
-        if not all([name, description, pics]):
+        if not all([name, description, picList]):
             res['msg'] = '参数异常'
             return Response(res)
 
@@ -35,8 +36,10 @@ class DatasetViewset(ModelViewSet):
             name = name,
             description = description,
         )
+
+        pics = Picture.objects.filter(id__in=picList)
         new_dataset.pics.set(pics)
-        # new_dataset.save()
+        new_dataset.save()
 
         res['msg'] = '创建成功'
         res['code'] = 1
