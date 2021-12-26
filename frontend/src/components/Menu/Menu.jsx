@@ -11,8 +11,13 @@ import {
 } from '@ant-design/icons';
 
 import { Navigate, NavLink, Route, Routes } from "react-router-dom";
+import Annotation from '../Annotation/Annotation';
+import DatasetList from '../Dataset/DatasetList/DatasetList.tsx';
+import PicList from '../Picture/PicList/PicList.tsx';
 import PicUpload from '../Picture/PicUpload/PicUpload';
-import withRouter from './withRouter';
+import TaskCreate from '../Task/TaskCreate/TaskCreate';
+import TaskList from '../Task/TaskList/TaskList.tsx';
+import DatasetCreate from '../Dataset/DatasetCreate/DatasetCreate';
 
 const { Header, Content, Footer, Sider } = Layout;
 const { SubMenu } = Menu;
@@ -23,6 +28,7 @@ class SiderMenu extends React.Component {
   }
   state = {
     collapsed: false,
+    selected: 0,
   };
 
   onCollapse = collapsed => {
@@ -32,6 +38,34 @@ class SiderMenu extends React.Component {
 
   render() {
     const { collapsed } = this.state;
+    var content;
+    switch(this.state.selected) {
+      case 1:
+        content = <TaskCreate User_ID={this.props.User_ID}/>;
+        break;
+      case 2:
+        content = <TaskList User_ID={this.props.User_ID}/>;
+        // content = <Protable/>
+        break;
+      case 3:
+        content = <PicList User_ID={this.props.User_ID}/>;
+        break;
+      case 4:
+        content = <PicUpload User_ID={this.props.User_ID}/>
+        break;
+      case 5:
+          content = <DatasetCreate User_ID={this.props.User_ID}/>;
+          break;
+      case 6:
+        content = <DatasetList User_ID={this.props.User_ID}/>;
+        break;
+      case 7:
+        content = <Annotation User_ID={this.props.User_ID}/>;
+        break;
+      default:
+        content = <h1>Welcome to Labelpix!</h1>
+        break;
+    }
     return (
       this.props.isLoggedIn ?
       <Layout style={{ minHeight: '100vh' }}>
@@ -39,21 +73,18 @@ class SiderMenu extends React.Component {
           <div className="logo" />
           <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline">
             <SubMenu key="sub1" icon={<UserOutlined />} title="任务管理">
-              <Menu.Item key="1">创建任务</Menu.Item>
-              <Menu.Item key="2">任务列表</Menu.Item>
+              <Menu.Item key="1" onClick={()=>this.setState({selected: 1})}>创建任务</Menu.Item>
+              <Menu.Item key="2" onClick={()=>this.setState({selected: 2})}>任务列表</Menu.Item>
             </SubMenu>
-            <SubMenu key="sub2" icon={<UserOutlined />} title="图像管理">
-                <Menu.Item key="4">图像列表</Menu.Item>
-                <Menu.Item key="/picture/upload">
-                  <NavLink exact to='/picture/upload'>
-                    <span>图像上传</span>
-                  </NavLink>
-                </Menu.Item>
+            <SubMenu key="sub2" icon={<DesktopOutlined />} title="图像管理">
+                <Menu.Item key="3" onClick={()=>this.setState({selected: 3})}>图像列表</Menu.Item>
+                <Menu.Item key="4" onClick={()=>this.setState({selected: 4})}>图像上传</Menu.Item>
             </SubMenu>
             <SubMenu key="sub3" icon={<UserOutlined />} title="数据集管理">
-              <Menu.Item key="6">数据集列表</Menu.Item>
+              <Menu.Item key="5" onClick={()=>this.setState({selected: 5})}>创建数据集</Menu.Item>
+              <Menu.Item key="6" onClick={()=>this.setState({selected: 6})}>数据集列表</Menu.Item>
             </SubMenu>
-            <Menu.Item key="7" icon={<PieChartOutlined />}>
+            <Menu.Item key="7" icon={<PieChartOutlined /> } onClick={()=>this.setState({selected: 7})}>
               数据标注
             </Menu.Item>
           </Menu>
@@ -65,7 +96,7 @@ class SiderMenu extends React.Component {
             </div>
           </Header>
           <Content style={{ margin: '0 16px' }}>
-            <PicUpload User_ID={this.props.User_ID}/>
+            {content}
           </Content>
           <Footer style={{ textAlign: 'center' }}>Labelpix ©2021 Created by OE.Heart</Footer>
         </Layout>
@@ -76,4 +107,4 @@ class SiderMenu extends React.Component {
   }
 }
 
-export default withRouter(SiderMenu);
+export default SiderMenu;
