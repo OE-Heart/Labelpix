@@ -1,6 +1,6 @@
 import React from "react";
+import ReactImageAnnotate from "react-image-annotate";
 
-import axios from "axios";
 
 class Annotation extends React.Component {
   constructor(props) {
@@ -12,7 +12,18 @@ class Annotation extends React.Component {
 
   render() {
     return (
-      <h1>Annotation</h1>
+      <ReactImageAnnotate
+    labelImages
+    regionClsList={["Alpha", "Beta", "Charlie", "Delta"]}
+    regionTagList={["tag1", "tag2", "tag3"]}
+    images={[
+      {
+        src: "https://placekitten.com/408/287",
+        name: "Image 1",
+        regions: []
+      }
+    ]}
+  />
     )
   }
 }
