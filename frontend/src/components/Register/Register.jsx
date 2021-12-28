@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Input, Button } from 'antd';
+import { Form, Input, Button, message } from 'antd';
 import { UserOutlined, LockOutlined, MailOutlined } from '@ant-design/icons';
 import './Register.css';
 import axios from 'axios'
@@ -9,25 +9,25 @@ class Register extends React.Component {
     console.log('Success:', values);
 
     if (values.username.length < 6) {
-      alert('用户名长度应在6位以上')
+      message.warning('用户名长度应在6位以上')
       return
     }
 
     if (values.password.length < 6) {
-      alert('用户名长度应在6位以上')
+      message.warning('密码长度应在6位以上')
       return
     }
 
     var reg = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
     if (!reg.test(values.email)) {
-      alert('邮箱格式错误')
+      message.warning('邮箱格式错误')
       return
     }
     
     let url = 'http://127.0.0.1:8000/user/register/'
 
     axios.post(url, values, {headers: {'Content-Type': 'application/json'}}).then(res => {
-      alert(res.data.msg)
+      message.info(res.data.msg)
       if (res.status === 200 && res.data.code === 1) {
         console.log('注册成功')
       }

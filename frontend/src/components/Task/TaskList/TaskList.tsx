@@ -115,8 +115,8 @@ export default function TaskList(props) {
     title: '操作',
     valueType: 'option',
     render: (text, record, _, action) => [
-      <a
-        onClick={() => {
+      (record.state == 'W') ? 
+        <a onClick={() => {
           // console.log(record)
           var data = new Object()
           data['id'] = record.id
@@ -138,34 +138,54 @@ export default function TaskList(props) {
               console.log(err)
           })
         }}
-      >
-        领取
-      </a>,
-      <a
-      onClick={() => {
-        // console.log(record)
-        var data = new Object()
-        data['id'] = record.id
-        console.log(data)
-        let url = "http://127.0.0.1:8000/task/complete/"
-
-        axios.post(url, data, {headers: {'Content-Type': 'application/json'}}).then(
-          res => {
-            alert (res.data.msg)
-            if (res.status === 200 && res.data.code === 1) {
-              console.log('提交成功')
-            }
-            else {
-              console.log(res)
-            }
-          }
-        ).catch((err) =>{
-            console.log(err)
-        })
-      }}
-      >
-        提交
-      </a>,
+        >
+          领取
+        </a>
+      : (record.state == 'P') ? 
+        <a
+          onClick={() => {
+            // console.log(record)
+            var data = new Object()
+            data['id'] = record.id
+            console.log(data)
+            let url = "http://127.0.0.1:8000/task/complete/"
+          
+            axios.post(url, data, {headers: {'Content-Type': 'application/json'}}).then(
+              res => {
+                alert (res.data.msg)
+                if (res.status === 200 && res.data.code === 1) {
+                  console.log('提交成功')
+                }
+                else {
+                  console.log(res)
+                }
+              }
+            ).catch((err) =>{
+                console.log(err)
+            })
+          }}
+          >
+            提交
+        </a> 
+        : (record.state == 'D') ? 
+        <a
+          onClick={() => {
+            console.log(record)
+          }}
+          >
+            导出
+        </a> : <div></div>,
+      (record.state == 'P') ? 
+        <a
+          onClick={() => {
+            console.log(record)
+            props.setSelected(7)
+          }}
+          >
+            选择
+        </a>
+      : <div></div>,
+      ,
     ],
   },
 ];

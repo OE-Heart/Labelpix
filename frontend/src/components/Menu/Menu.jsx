@@ -36,6 +36,11 @@ class SiderMenu extends React.Component {
     this.setState({ collapsed });
   };
 
+  setSelected = selected => {
+    console.log("selected");
+    this.setState({ selected });
+  }
+
   render() {
     const { collapsed } = this.state;
     var content;
@@ -48,7 +53,7 @@ class SiderMenu extends React.Component {
         // content = <Protable/>
         break;
       case 3:
-        content = <PicList User_ID={this.props.User_ID}/>;
+        content = <PicList User_ID={this.props.User_ID} setSelected={this.setSelected}/>;
         break;
       case 4:
         content = <PicUpload User_ID={this.props.User_ID}/>

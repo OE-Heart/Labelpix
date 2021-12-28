@@ -1,5 +1,5 @@
 import React from "react";
-import { Form, Select, Input, Button } from 'antd';
+import { Form, Select, Input, Button, message } from 'antd';
 import axios from "axios";
 
 const { Option } = Select;
@@ -36,7 +36,7 @@ class DatasetCreate extends React.Component {
 
     axios.post(url, values, {headers: {'Content-Type': 'application/json'}}).then(
       res => {
-        alert (res.data.msg)
+        message.info(res.data.msg)
         if (res.status === 200 && res.data.code === 1) {
           console.log('创建成功')
         }

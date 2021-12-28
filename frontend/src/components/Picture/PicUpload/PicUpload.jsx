@@ -2,8 +2,11 @@ import React from 'react';
 import axios from 'axios';
 
 import { Upload, Button, message } from 'antd';
-import { CloudUploadOutlined } from '@ant-design/icons';
+import { CloudUploadOutlined, UploadOutlined } from '@ant-design/icons';
 
+import './PicUpload.css'
+import DirectoryUpload from './DirectoryUpload';
+import VideoUpload from './VideoUpload';
 
 class PicUpload extends React.Component {
   constructor(props) {
@@ -18,10 +21,8 @@ class PicUpload extends React.Component {
       'fileList': fileList.length? [fileList[fileList.length - 1]] : []
     })
   }
-
-  beforeUpload
   
-  handleUpload = () => {
+  handlePicUpload = () => {
     if(!this.state.fileList.length) {
         message.warning("请选择要上传的文件")
     }
@@ -33,15 +34,15 @@ class PicUpload extends React.Component {
         uploading: true
     })
 
-    data.append('owner', this.props.User_ID);
+    data.append('owner', this.props.User_ID)
 
-    console.log(data);
+    console.log(data)
 
     let url = 'http://127.0.0.1:8000/picture/upload/'
 
     axios.post(url, data, {headers: {'Content-Type': 'multipart/form-data'}}).then(
       res => {
-        alert (res.data.msg)
+        message.info(res.data.msg)
         if (res.status === 200 && res.data.code === 1) {
           console.log('上传成功')
         }
@@ -60,13 +61,15 @@ class PicUpload extends React.Component {
 
   render() {
     return (
-      <div>
-      <Upload fileList={this.state.fileList} beforeUpload={(f, fList) => false} onChange={this.handleFileChange} >
+      <div className='PicUpload-div'>
+      <Upload fileList={this.state.fileList} beforeUpload={(f, fList) => false} onChange={this.handleFileChange}>
         <Button>
           <CloudUploadOutlined /> 选择文件
         </Button>
       </Upload>
-      <Button onClick={this.handleUpload}>上传</Button>
+      <Button onClick={this.handlePicUpload}>上传</Button>
+      <DirectoryUpload User_ID={this.props.User_ID}/>
+      <VideoUpload User_ID={this.props.User_ID}/>
       </div>
     )
   }
