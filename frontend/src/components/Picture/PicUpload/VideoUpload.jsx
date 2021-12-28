@@ -1,6 +1,6 @@
 import React from 'react';
 import { Upload, Button, message } from 'antd';
-import { UploadOutlined } from '@ant-design/icons';
+import { VideoCameraAddOutlined } from '@ant-design/icons';
 import axios from 'axios';
 
 class VideoUpload extends React.Component {
@@ -54,7 +54,7 @@ class VideoUpload extends React.Component {
 		return (
 			<div>
 				<Upload fileList={this.state.fileList} beforeUpload={(f, fList) => false} onChange={this.handleFileChange}>
-    			<Button icon={<UploadOutlined />}>选择视频文件</Button>
+    			<Button icon={<VideoCameraAddOutlined />}>选择视频文件</Button>
   			</Upload>
 				<Button onClick={this.handleVideoUpload}>上传</Button>
 			</div>

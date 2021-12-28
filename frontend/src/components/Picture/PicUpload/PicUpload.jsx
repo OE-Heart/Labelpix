@@ -2,7 +2,7 @@ import React from 'react';
 import axios from 'axios';
 
 import { Upload, Button, message } from 'antd';
-import { CloudUploadOutlined, UploadOutlined } from '@ant-design/icons';
+import { CloudUploadOutlined } from '@ant-design/icons';
 
 import './PicUpload.css'
 import DirectoryUpload from './DirectoryUpload';

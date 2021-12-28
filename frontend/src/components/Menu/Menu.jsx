@@ -1,12 +1,12 @@
 import React from 'react';
 import './Menu.css';
 
-import { Layout, Menu, Breadcrumb } from 'antd';
+import { Layout, Menu, Breadcrumb, message } from 'antd';
 import {
-  DesktopOutlined,
   PieChartOutlined,
-  FileOutlined,
   TeamOutlined,
+  FileImageOutlined,
+  DatabaseOutlined,
   UserOutlined,
 } from '@ant-design/icons';
 
@@ -29,16 +29,19 @@ class SiderMenu extends React.Component {
   state = {
     collapsed: false,
     selected: 0,
+    selectedTask: [],
   };
 
   onCollapse = collapsed => {
-    console.log(collapsed);
     this.setState({ collapsed });
   };
 
   setSelected = selected => {
-    console.log("selected");
     this.setState({ selected });
+  }
+q
+  setSelectedTask = selectedTask => {
+    this.setState({ selectedTask });
   }
 
   render() {
@@ -49,11 +52,11 @@ class SiderMenu extends React.Component {
         content = <TaskCreate User_ID={this.props.User_ID}/>;
         break;
       case 2:
-        content = <TaskList User_ID={this.props.User_ID}/>;
+        content = <TaskList User_ID={this.props.User_ID} setSelected={this.setSelected} setSelectedTask={this.setSelectedTask}/>;
         // content = <Protable/>
         break;
       case 3:
-        content = <PicList User_ID={this.props.User_ID} setSelected={this.setSelected}/>;
+        content = <PicList User_ID={this.props.User_ID} />;
         break;
       case 4:
         content = <PicUpload User_ID={this.props.User_ID}/>
@@ -65,7 +68,7 @@ class SiderMenu extends React.Component {
         content = <DatasetList User_ID={this.props.User_ID}/>;
         break;
       case 7:
-        content = <Annotation User_ID={this.props.User_ID}/>;
+        content = <Annotation User_ID={this.props.User_ID} selectedTask={this.state.selectedTask}/>;
         break;
       default:
         content = <h1>Welcome to Labelpix!</h1>
@@ -77,15 +80,15 @@ class SiderMenu extends React.Component {
         <Sider collapsible collapsed={collapsed} onCollapse={this.onCollapse}>
           <div className="logo" />
           <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline">
-            <SubMenu key="sub1" icon={<UserOutlined />} title="任务管理">
+            <SubMenu key="sub1" icon={<TeamOutlined />} title="任务管理">
               <Menu.Item key="1" onClick={()=>this.setState({selected: 1})}>创建任务</Menu.Item>
               <Menu.Item key="2" onClick={()=>this.setState({selected: 2})}>任务列表</Menu.Item>
             </SubMenu>
-            <SubMenu key="sub2" icon={<DesktopOutlined />} title="图像管理">
+            <SubMenu key="sub2" icon={<FileImageOutlined />} title="图像管理">
                 <Menu.Item key="3" onClick={()=>this.setState({selected: 3})}>图像列表</Menu.Item>
                 <Menu.Item key="4" onClick={()=>this.setState({selected: 4})}>图像上传</Menu.Item>
             </SubMenu>
-            <SubMenu key="sub3" icon={<UserOutlined />} title="数据集管理">
+            <SubMenu key="sub3" icon={<DatabaseOutlined />} title="数据集管理">
               <Menu.Item key="5" onClick={()=>this.setState({selected: 5})}>创建数据集</Menu.Item>
               <Menu.Item key="6" onClick={()=>this.setState({selected: 6})}>数据集列表</Menu.Item>
             </SubMenu>

@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { PlusOutlined, EllipsisOutlined, ConsoleSqlOutlined } from '@ant-design/icons';
-import { Button, Tag, Space, Menu, Dropdown } from 'antd';
+import { Button, Tag, Space, Menu, Dropdown, message } from 'antd';
 import type { ProColumns, ActionType } from '@ant-design/pro-table';
 import ProTable, { TableDropdown } from '@ant-design/pro-table';
 import request from 'umi-request';
@@ -117,7 +117,10 @@ export default function TaskList(props) {
     render: (text, record, _, action) => [
       (record.state == 'W') ? 
         <a onClick={() => {
-          // console.log(record)
+          if (record.creat_user === props.User_ID) {
+            message.warning('您是该任务创建者，不能领取该任务')
+            return;
+          }
           var data = new Object()
           data['id'] = record.id
           data['take_user'] = props.User_ID
@@ -144,7 +147,10 @@ export default function TaskList(props) {
       : (record.state == 'P') ? 
         <a
           onClick={() => {
-            // console.log(record)
+            if (record.take_user !== props.User_ID) {
+              message.warning('您不是该任务的领取者，不能提交该任务')
+              return;
+            }
             var data = new Object()
             data['id'] = record.id
             console.log(data)
@@ -170,6 +176,10 @@ export default function TaskList(props) {
         : (record.state == 'D') ? 
         <a
           onClick={() => {
+            if (record.creat_user !== props.User_ID) {
+              message.warning('您不是该任务的创建者，不能导出该任务')
+              return;
+            }
             console.log(record)
           }}
           >
@@ -178,8 +188,12 @@ export default function TaskList(props) {
       (record.state == 'P') ? 
         <a
           onClick={() => {
-            console.log(record)
+            if (record.take_user !== props.User_ID) {
+              message.warning('您不是该任务的领取者，不能选择该任务')
+              return;
+            }
             props.setSelected(7)
+            props.setSelectedTask(record)
           }}
           >
             选择
