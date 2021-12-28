@@ -1,4 +1,4 @@
-# Lablepix
+# Labelpix
 
 A website for image data annotation for machine learning.
 
@@ -9,6 +9,7 @@ A website for image data annotation for machine learning.
 - [React.js](https://reactjs.org/) - JavaScript library for building user interfaces.
 - [Ant Design](https://ant.design/) - React UI library that contains a set of high quality components and demos for building rich, interactive user interfaces.
 - [ProComponents](https://procomponents.ant.design/en-US) - Template component based on Ant Design that provides a higher level of abstraction support out of the box.
+- [axios](https://axios-http.com/) - Promise based HTTP client for the browser and node.js.
 
 ### Backend
 
