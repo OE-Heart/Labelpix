@@ -1,15 +1,17 @@
 from rest_framework.viewsets import ModelViewSet
 from .serializers import PictureSerializer
-from .models import Picture
-# from .models import VOCPicture, COCOPicture
+from .models import Picture, VOCPicture, COCOPicture
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.contrib.auth.models import User
 import cv2
 import random, datetime, os
-from .serializers import PictureSerializer
+import json
+import xmltodict
+from .serializers import PictureSerializer, VOCPictureSerializer, COCOPictureSerializer
 from rest_framework.parsers import JSONParser, FormParser, MultiPartParser
 from pathlib import Path
+from django.core.files import File
 from django.core.files.images import ImageFile
 
 # Create your views here.
@@ -164,3 +166,57 @@ class PictureViewset(ModelViewSet):
             res['code'] = 500
             res['data'] = {}
             return Response(res)
+
+class VOCPictureViewset(ModelViewSet):
+
+    serializer_class = VOCPictureSerializer
+    queryset = VOCPicture.objects.all()
+
+    @action(methods=['POST'], url_path='annotate', detail=False)
+    def VOC_annotation(self, req):
+
+        pics = req.data.get('images')
+        annotations = req.data.get('annotations')
+
+        res = {
+            'code': 0,
+            'msg': '',
+            'data': {}
+        }
+
+        if not all([pics, annotations]):
+            res['msg'] = '参数异常'
+            return Response(res)
+
+        BASE_DIR = Path(__file__).resolve().parent.parent
+        MEDIA_ROOT = os.path.join(BASE_DIR, 'media').replace('\\', '/')
+        XML_PATH = os.path.join(MEDIA_ROOT, "file").replace('\\', '/')
+
+        for i in range(len(pics)):
+            xmlstr = xmltodict.unparse(annotations[i])
+            xml_abs_path = os.path.join(XML_PATH, str(pics[i]))+"_VOC.xml"
+            pic = Picture.objects.get(id=pics[i])
+            filename = str(pics[i])+"_VOC.xml"
+
+            with open(xml_abs_path, 'w+') as f:
+                f.write(xmlstr)
+                if VOCPicture.objects.filter(pic=pics[i]).first() == None:
+                    new_VOCPicture = VOCPicture.objects.create(
+                        pic = pic,
+                        annotation = None
+                    )
+                    new_VOCPicture.annotation.save(filename, File(f))
+                else:
+                    VOCPic = VOCPicture.objects.get(pic=pics[i])
+                    VOCPic.annotation.delete()
+                    VOCPic.annotation.save(filename, File(f))
+
+        res['msg'] = '提交成功'
+        res['code'] = 1
+        res['data'] = {}
+        return Response(res) 
+
+class COCOPictureViewset(ModelViewSet):
+
+    serializer_class = COCOPictureSerializer
+    queryset = COCOPicture.objects.all()
