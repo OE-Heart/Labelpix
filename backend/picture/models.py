@@ -11,7 +11,3 @@ class Picture(models.Model):
 class VOCPicture(models.Model):
     pic = models.OneToOneField(Picture, on_delete=models.CASCADE)
     annotation = models.FileField(upload_to='VOC')
-
-class COCOPicture(models.Model):
-    pic = models.OneToOneField(Picture, on_delete=models.CASCADE)
-    annotation = models.FileField(upload_to='COCO')

@@ -1,14 +1,13 @@
 from rest_framework.viewsets import ModelViewSet
 from .serializers import PictureSerializer
-from .models import Picture, VOCPicture, COCOPicture
+from .models import Picture, VOCPicture
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.contrib.auth.models import User
 import cv2
 import random, datetime, os
-import json
 import xmltodict
-from .serializers import PictureSerializer, VOCPictureSerializer, COCOPictureSerializer
+from .serializers import PictureSerializer, VOCPictureSerializer
 from rest_framework.parsers import JSONParser, FormParser, MultiPartParser
 from pathlib import Path
 from django.core.files import File
@@ -215,8 +214,3 @@ class VOCPictureViewset(ModelViewSet):
         res['code'] = 1
         res['data'] = {}
         return Response(res) 
-
-class COCOPictureViewset(ModelViewSet):
-
-    serializer_class = COCOPictureSerializer
-    queryset = COCOPicture.objects.all()

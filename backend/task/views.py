@@ -1,4 +1,3 @@
-from os import error
 from rest_framework.viewsets import ModelViewSet
 from .serializers import TaskSerializer
 from .models import Task

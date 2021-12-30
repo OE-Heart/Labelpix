@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Picture, VOCPicture, COCOPicture
+from .models import Picture, VOCPicture
 
 class PictureSerializer(serializers.ModelSerializer):
     class Meta:
@@ -9,9 +9,4 @@ class PictureSerializer(serializers.ModelSerializer):
 class VOCPictureSerializer(serializers.ModelSerializer):
     class Meta:
         model = VOCPicture
-        fields = '__all__'
-
-class COCOPictureSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = COCOPicture
         fields = '__all__'

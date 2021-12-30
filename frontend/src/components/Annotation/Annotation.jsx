@@ -4,6 +4,29 @@ import ReactImageAnnotate from "react-image-annotate";
 import "./Annotation.css";
 import axios from "axios";
 
+const categories = [
+  {'supercategory': 'Person', 'id': 1, 'name': 'Person'},
+  {'supercategory': 'Animal', 'id': 2, 'name': 'Bird'},
+  {'supercategory': 'Animal', 'id': 3, 'name': 'Cat'},
+  {'supercategory': 'Animal', 'id': 4, 'name': 'Cow'},
+  {'supercategory': 'Animal', 'id': 5, 'name': 'Dog'},
+  {'supercategory': 'Animal', 'id': 6, 'name': 'Horse'},
+  {'supercategory': 'Animal', 'id': 7, 'name': 'Sheep'},
+  {'supercategory': 'Vehicle', 'id': 8, 'name': 'Aeroplane'},
+  {'supercategory': 'Vehicle', 'id': 9, 'name': 'Bicycle'},
+  {'supercategory': 'Vehicle', 'id': 10, 'name': 'Boat'},
+  {'supercategory': 'Vehicle', 'id': 11, 'name': 'Bus'},
+  {'supercategory': 'Vehicle', 'id': 12, 'name': 'Car'},
+  {'supercategory': 'Vehicle', 'id': 13, 'name': 'Motorbike'},
+  {'supercategory': 'Vehicle', 'id': 14, 'name': 'Train'},
+  {'supercategory': 'Indoor', 'id': 15, 'name': 'Bottle'},
+  {'supercategory': 'Indoor', 'id': 16, 'name': 'Chair'},
+  {'supercategory': 'Indoor', 'id': 17, 'name': 'Dining table'},
+  {'supercategory': 'Indoor', 'id': 18, 'name': 'Potted plant'},
+  {'supercategory': 'Indoor', 'id': 19, 'name': 'Sofa'},
+  {'supercategory': 'Indoor', 'id': 20, 'name': 'TV'},
+]
+
 class Annotation extends React.Component {
   constructor(props) {
     super(props);
@@ -125,12 +148,13 @@ class Annotation extends React.Component {
 
     axios.post(url, data, {headers: {"Content-Type": "application/json"}}).then(
       res => {
-        message.info(res.data.msg)
         if (res.status === 200 && res.data.code === 1) {
+          message.success(res.data.msg)
           this.setState({exited: true})
           console.log("提交成功")
         }
         else {
+          message.error(res.data.msg)
           console.log(res)
         }
       }
@@ -138,6 +162,102 @@ class Annotation extends React.Component {
         console.log(err)
     })
 
+  }
+
+  handleCOCOSubmit = (MainLayoutState) => {
+    let date = new Date();
+    let dataset = {};
+    dataset['info'] = {
+      'description': this.state.name, 
+      'url': '', 
+      'version': '1.0',
+      'year': date.getFullYear().toString(),
+      'contributor': '',
+      'date_created': date.toLocaleString(),
+    };
+    dataset['license'] = [
+      {
+        "url": "http://creativecommons.org/licenses/by-nc-sa/2.0/", 
+        "id": 1, 
+        "name": "Attribution-NonCommercial-ShareAlike License"
+      },
+    ];
+    dataset['images'] = MainLayoutState.images.map(item => {
+      return {
+        'license': 1,
+        'file_name': item.name,
+        'coco_url': item.src,
+        'height': item.pixelSize.h,
+        'width': item.pixelSize.w,
+        'date_captured': null,
+        'flickr_url': '',
+        'id': item.id
+      }
+    });
+    dataset['categories'] = categories;
+
+    let annotations = [];
+    for (let i = 0; i < MainLayoutState.images.length; i++){
+      for (let j = 0; j < MainLayoutState.images[i].regions.length; j++){
+        if (MainLayoutState.images[i].regions[j].type === 'polygon'){
+          let segmentations = [];
+          for (let k = 0; k < MainLayoutState.images[i].regions[j].points.length; k++){
+            segmentations.push(MainLayoutState.images[i].regions[j].points[k][0]);
+            segmentations.push(MainLayoutState.images[i].regions[j].points[k][1]);
+          }
+          annotations.push({
+            'segmentation': [segmentations],
+            'area': null,
+            'iscrowd': 0,
+            'image_id': MainLayoutState.images[i].id,
+            'bbox': null,
+            'category_id': categories.find(item => {
+              return item.name === MainLayoutState.images[i].regions[j].cls;
+            }).id,
+            'id': parseInt(MainLayoutState.images[i].regions[j].id)
+          })
+        }
+        else if (MainLayoutState.images[i].regions[j].type === 'box'){
+          let bbox = [
+            MainLayoutState.images[i].regions[j].x,
+            MainLayoutState.images[i].regions[j].y,
+            MainLayoutState.images[i].regions[j].w,
+            MainLayoutState.images[i].regions[j].h,
+          ];
+          annotations.push({
+            'segmentation': null,
+            'area': null,
+            'iscrowd': 0,
+            'image_id': MainLayoutState.images[i].id,
+            'bbox': bbox,
+            'category_id': categories.find(item => {
+              return item.name === MainLayoutState.images[i].regions[j].cls;
+            })['id'],
+            'id': parseInt(MainLayoutState.images[i].regions[j].id)
+          })
+        }
+      }
+    }
+    dataset['annotations'] = annotations
+    // console.log(dataset)
+
+    const data = {
+      "dataset": this.props.selectedTask.dataset,
+      "annotation": JSON.stringify(dataset),
+    }
+
+    axios.post('http://127.0.0.1:8000/COCO/annotate/', data, {headers: {"Content-Type": "application/json"}}).then(res => {
+      if (res.status === 200 && res.data.code === 1) {
+        message.success(res.data.msg)
+        this.setState({exited: true})
+      }
+      else {
+        message.error(res.data.msg)
+        console.log(res)
+      }
+    }).catch(err => {
+      console.log(err)
+    })
   }
 
   handleExit = (MainLayoutState) => {
@@ -149,7 +269,15 @@ class Annotation extends React.Component {
     }
     else {
       // console.log(MainLayoutState)
-      this.handleVOCSubmit(MainLayoutState)
+      if (this.props.selectedTask.type === 'V') {
+        this.handleVOCSubmit(MainLayoutState)
+      }
+      else if (this.props.selectedTask.type === 'C') {
+        this.handleCOCOSubmit(MainLayoutState)
+      }
+      else {
+        message.error("暂不支持当前数据集格式")
+      }
     }
   }
 
@@ -161,13 +289,12 @@ class Annotation extends React.Component {
       return (
         <ReactImageAnnotate
           labelImages
-          enabledTools={["select", "create-box"]}
+          enabledTools={['select', 'create-box', 'create-polygon']}
           images={this.state.images}
           selectedImage={this.state.selectedImage}
           onNextImage={this.handleNext}
           onPrevImage={this.handlePrev}
-          // taskDescription={this.props.selectedTask.description}
-          regionClsList={["person", "Bird", "Cat", "Cow", "Dog", "Horse", "Sheep", "Aeroplane", "Bicycle", "Boat", "Bus", "Car", "Motorbike", "Train", "Bottle", "Chair", "Dining table", "Potted plant", "Sofa", "Monitor"]}
+          regionClsList={categories.map(item => {return item.name})}
           regionTagList={["difficult", "truncated"]}
           hideSettings={true}
           onExit={this.handleExit}

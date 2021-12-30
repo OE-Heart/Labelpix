@@ -1,10 +1,12 @@
 from rest_framework.viewsets import ModelViewSet
-from .serializers import DatasetSerializer
-from .models import Dataset
+from .serializers import DatasetSerializer, COCODatasetSerializer
+from .models import Dataset, COCODataset
 from picture.models import Picture
 from rest_framework.decorators import action
-from django.contrib.auth import login
 from rest_framework.response import Response
+import os
+from pathlib import Path
+from django.core.files import File
 
 # Create your views here.
 
@@ -46,4 +48,51 @@ class DatasetViewset(ModelViewSet):
         res['data'] = {}
         return Response(res)
 
-    # def export_dataset(req):
+class COCODatasetViewset(ModelViewSet):
+
+    serializer_class = COCODatasetSerializer
+    queryset = COCODataset.objects.all()
+
+    @action(methods=['POST'], url_path='annotate', detail=False)
+    def COCO_annotation(self, req):
+
+        dataset = Dataset.objects.get(id=req.data.get('dataset'))
+        annotation = req.data.get('annotation')
+
+        res = {
+            'code': 0,
+            'msg': '',
+            'data': {}
+        }
+
+        if not all([dataset, annotation]):
+            res['msg'] = '参数异常'
+            return Response(res)
+
+        # print(dataset)
+        # print(annotation)
+
+        BASE_DIR = Path(__file__).resolve().parent.parent
+        MEDIA_ROOT = os.path.join(BASE_DIR, 'media').replace('\\', '/')
+        JSON_PATH = os.path.join(MEDIA_ROOT, "file").replace('\\', '/')
+
+        json_abs_path = os.path.join(JSON_PATH, str(dataset.id))+"_COCO.xml"
+        filename = str(dataset.id)+"_COCO.xml"
+
+        with open(json_abs_path, 'w+') as f:
+            f.write(annotation)
+            if COCODataset.objects.filter(dataset=dataset.id).first() == None:
+                new_COCODataset = COCODataset.objects.create(
+                    dataset = dataset, 
+                    annotation = None
+                )
+                new_COCODataset.annotation.save(filename, File(f))
+            else:
+                COCOData = COCODataset.objects.get(dataset=dataset.id)
+                COCOData.annotation.delete()
+                COCOData.annotation.save(filename, File(f))
+
+        res['msg'] = '提交成功'
+        res['code'] = 1
+        res['data'] = {}
+        return Response(res) 
