@@ -27,11 +27,12 @@ class Register extends React.Component {
     let url = 'http://127.0.0.1:8000/user/register/'
 
     axios.post(url, values, {headers: {'Content-Type': 'application/json'}}).then(res => {
-      message.info(res.data.msg)
       if (res.status === 200 && res.data.code === 1) {
+        message.success(res.data.msg)
         console.log('注册成功')
       }
       else {
+        message.error(res.data.msg)
         console.log(res)
       }
     })

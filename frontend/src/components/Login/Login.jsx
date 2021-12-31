@@ -16,13 +16,12 @@ class Login extends React.Component {
     let url = 'http://127.0.0.1:8000/user/login/'
 
     axios.post(url, values, {headers: {'Content-Type': 'application/json'}}).then(res => {
-      message.info(res.data.msg)
       if (res.status === 200 && res.data.code === 1) {
-        // console.log(res)
-        console.log(res.data.data.id)
+        message.success(res.data.msg)
         this.props.LoggedIn(res.data.data.id)
       }
       else {
+        message.error(res.data.msg)
         console.log(res)
       }
     })

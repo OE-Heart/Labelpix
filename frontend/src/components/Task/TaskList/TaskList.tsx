@@ -129,11 +129,12 @@ export default function TaskList(props) {
 
           axios.post(url, data, {headers: {'Content-Type': 'application/json'}}).then(
             res => {
-              alert (res.data.msg)
               if (res.status === 200 && res.data.code === 1) {
+                message.success(res.data.msg)
                 console.log('领取成功')
               }
               else {
+                message.error(res.data.msg)
                 console.log(res)
               }
             }
@@ -158,11 +159,12 @@ export default function TaskList(props) {
           
             axios.post(url, data, {headers: {'Content-Type': 'application/json'}}).then(
               res => {
-                alert (res.data.msg)
                 if (res.status === 200 && res.data.code === 1) {
+                  message.success(res.data.msg)
                   console.log('提交成功')
                 }
                 else {
+                  message.error(res.data.msg)
                   console.log(res)
                 }
               }
@@ -180,7 +182,38 @@ export default function TaskList(props) {
               message.warning('您不是该任务的创建者，不能导出该任务')
               return;
             }
-            console.log(record)
+            var data = new Object()
+            data['dataset'] = record.dataset;
+
+            if (record.type === 'V') {
+              message.error("V")
+            }
+            else if (record.type === 'C') {
+              let url = "http://127.0.0.1:8000/COCO/download/"
+              axios.post(url, data, {headers: {'Content-Type': 'application/json'}}).then(
+                res => {
+                  console.log(res.data)
+                  var data = JSON.stringify(res.data)
+
+                  // 构建下载对象
+                  const blobURL = new Blob([data], { type: 'text/json' })
+                  const tempLink = document.createElement('a')
+                  tempLink.style.display = 'none';
+                  tempLink.href = window.URL.createObjectURL(blobURL)
+                  tempLink.download = `${record.dataset}_COCO.json`
+                              
+                  // 模拟点击
+                  document.body.appendChild(tempLink);
+                  tempLink.click();
+                }
+              ).catch((err) =>{
+                  console.log(err)
+              })
+            }
+            else {
+              message.error("暂不支持当前数据集格式")
+            }
+            
           }}
           >
             导出

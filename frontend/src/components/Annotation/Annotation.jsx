@@ -123,8 +123,8 @@ class Annotation extends React.Component {
         object["difficult"] = 0
         if (region.tags) {
           for (var tag of region.tags) {
-            if (tag == "truncated") object["truncated"] = 1
-            if (tag == "difficult") object["difficult"] = 1
+            if (tag === "truncated") object["truncated"] = 1
+            if (tag === "difficult") object["difficult"] = 1
           }
         }
         // console.log(object)
