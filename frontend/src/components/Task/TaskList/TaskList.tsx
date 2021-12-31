@@ -3,8 +3,6 @@ import { PlusOutlined, EllipsisOutlined, ConsoleSqlOutlined } from '@ant-design/
 import { Button, Tag, Space, Menu, Dropdown, message } from 'antd';
 import type { ProColumns, ActionType } from '@ant-design/pro-table';
 import ProTable, { TableDropdown } from '@ant-design/pro-table';
-import request from 'umi-request';
-
 import axios from "axios";
 
 type TaskItem = {
@@ -21,6 +19,20 @@ type TaskItem = {
 
 export default function TaskList(props) {
   const actionRef = useRef<ActionType>();
+
+  const [files, setFiles] = React.useState([])
+
+  const getFile = async (data) => {
+    const files = []
+
+    for (var item of data) {
+      var url = "http://127.0.0.1:8000"+item.url
+      var res = await axios.get(url, {headers: {'responseType': 'blob'}})
+      files.push(res.data)
+    }
+
+    return files;
+  }
 
   const columns: ProColumns<TaskItem>[] = [
   {
@@ -161,7 +173,6 @@ export default function TaskList(props) {
               res => {
                 if (res.status === 200 && res.data.code === 1) {
                   message.success(res.data.msg)
-                  console.log('提交成功')
                 }
                 else {
                   message.error(res.data.msg)
@@ -186,7 +197,43 @@ export default function TaskList(props) {
             data['dataset'] = record.dataset;
 
             if (record.type === 'V') {
-              message.error("V")
+              var JSZip = require("jszip"); 
+              var FileSaver = require('file-saver');
+              let url = "http://127.0.0.1:8000/VOC/download/"
+
+              axios.post(url, data, {headers: {'Content-Type': 'application/json'}}).then(
+                async res => {
+                  if (res.status === 200 && res.data.code === 1) {
+                    getFile(res.data.data).then(res => {
+                      setFiles(res)
+                    })
+                    console.log(files)
+
+                    const zip = new JSZip();
+                    for (var i = 0; i < files.length; i++) {
+                      zip.file(res.data.data[i].id + '_VOC.xml', files[i]);
+                    }
+
+                    var fileName = record.dataset+"_VOC.zip"
+                    zip.generateAsync({
+                      type: "blob",
+                      compression: "DEFLATE",  // STORE：默认不压缩 DEFLATE：需要压缩
+                      compressionOptions: {
+                        level: 9               // 压缩等级1~9    1压缩速度最快，9最优压缩方式
+                      }
+                    }).then((res: any) => {
+                      console.log(res)
+                      FileSaver.saveAs(res, fileName) // 利用file-saver保存文件
+                    })
+                  }
+                  else {
+                    message.error(res.data.msg)
+                    console.log(res)
+                  }
+                }
+              ).catch((err) =>{
+                  console.log(err)
+              })
             }
             else if (record.type === 'C') {
               let url = "http://127.0.0.1:8000/COCO/download/"

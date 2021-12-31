@@ -106,6 +106,7 @@ class COCODatasetViewset(ModelViewSet):
         res = {
             'code': 0,
             'msg': '',
+            'data': {}
         }
 
         if not all([dataset]):

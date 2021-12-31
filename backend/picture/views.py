@@ -1,6 +1,8 @@
+from django import urls
 from rest_framework.viewsets import ModelViewSet
 from .serializers import PictureSerializer
 from .models import Picture, VOCPicture
+from dataset.models import Dataset
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.contrib.auth.models import User
@@ -214,3 +216,36 @@ class VOCPictureViewset(ModelViewSet):
         res['code'] = 1
         res['data'] = {}
         return Response(res) 
+
+    @action(methods=['POST'], url_path='download', detail=False)
+    def VOC_download(self, req):
+
+        dataset = Dataset.objects.get(id=req.data.get('dataset'))
+
+        res = {
+            'code': 0,
+            'msg': '',
+            'data': {}
+        }
+
+        if not all([dataset]):
+            res['msg'] = '参数异常'
+            return Response(res)
+
+        print(dataset)
+        print(dataset.pics.all())
+        data = []
+        for item in dataset.pics.all():
+            VocPic = VOCPicture.objects.get(pic=item)
+            new_data_item = {
+                'id': item.id,
+                'url': VocPic.annotation.url
+            }
+            data.append(new_data_item)
+
+        print(data)
+        
+        res['msg'] = '导出成功'
+        res['code'] = 1
+        res['data'] = data
+        return Response(res)
