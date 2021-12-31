@@ -42,8 +42,23 @@ const columns: ProColumns<DatasetItem>[] = [
   },
 ]
 
-export default function DatasetList() {
+export default function DatasetList(props) {
   const actionRef = useRef<ActionType>();
+
+  const [data, setData] = React.useState([])
+  const [total, setTotal] = React.useState(0)
+
+  const getData = async(first_url) => {
+    var tempdata = []
+    for (let url = first_url; url !== null;){
+      var res = await axios.get(url, {headers: {'Content-Type': 'application/json'}})
+      tempdata = [...tempdata, ...res.data.results]
+      setTotal(res.data.count)
+      url = res.data.next
+    }
+    
+    return tempdata
+  }
 
   return (
     <ProTable<DatasetItem>
@@ -52,14 +67,14 @@ export default function DatasetList() {
       request={async (params = {}, sort, filter) => {
         // console.log(sort, filter);
         let url = 'http://127.0.0.1:8000/dataset/'
+        getData(url).then(res => {
+          setData(res)
+        })
 
-        var res = axios.get(url, {headers: {'Content-Type': 'application/json'}})
-
-        // console.log((await res).data)
         return {
-          data: (await res).data.results,
+          data: data,
           success: true,
-          total: (await res).data.count,
+          total: total,
         }
       }}
       editable={{
@@ -78,11 +93,11 @@ export default function DatasetList() {
       }}
       dateFormatter="string"
       // headerTitle="数据集列表"
-      // toolBarRender={() => [
-      //   <Button key="button" icon={<PlusOutlined />} type="primary">
-      //     新建
-      //   </Button>,
-      // ]}
+      toolBarRender={() => [
+        <Button key="button" icon={<PlusOutlined />} type="primary" onClick={() => {props.setSelected(5)}}>
+          新建
+        </Button>,
+      ]}
     />
   );
 };

@@ -53,19 +53,18 @@ q
         break;
       case 2:
         content = <TaskList User_ID={this.props.User_ID} setSelected={this.setSelected} setSelectedTask={this.setSelectedTask}/>;
-        // content = <Protable/>
         break;
       case 3:
-        content = <PicList User_ID={this.props.User_ID} />;
+        content = <PicList User_ID={this.props.User_ID} setSelected={this.setSelected}/>;
         break;
       case 4:
         content = <PicUpload User_ID={this.props.User_ID}/>
         break;
       case 5:
-          content = <DatasetCreate User_ID={this.props.User_ID}/>;
-          break;
+        content = <DatasetCreate User_ID={this.props.User_ID}/>;
+        break;
       case 6:
-        content = <DatasetList User_ID={this.props.User_ID}/>;
+        content = <DatasetList User_ID={this.props.User_ID} setSelected={this.setSelected}/>;
         break;
       case 7:
         content = <Annotation User_ID={this.props.User_ID} selectedTask={this.state.selectedTask}/>;
